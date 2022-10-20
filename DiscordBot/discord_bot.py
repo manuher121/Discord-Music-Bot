@@ -52,6 +52,7 @@ class Music(commands.Cog):
         self.bot = bot
 
     @commands.command()
+    """Command to resume the music"""
     async def resume(self, ctx):
         voice_client = ctx.message.guild.voice_client
         if voice_client.is_paused():
@@ -60,6 +61,7 @@ class Music(commands.Cog):
             await ctx.send("The bot was not playing anything before this. Use play_song command")
 
     @commands.command()
+        """Command to pause the music"""
     async def pause(self, ctx):
         voice_client = ctx.message.guild.voice_client
         if voice_client.is_playing():
@@ -68,6 +70,7 @@ class Music(commands.Cog):
             await ctx.send("The bot is not playing anything at the moment.")
 
     @commands.command()
+     """Command to join the voice chat on the discord server"""
     async def join(self, ctx, *, channel: discord.VoiceChannel):
         if ctx.voice_client is not None:
             return await ctx.voice_client.move_to(channel)
@@ -75,6 +78,7 @@ class Music(commands.Cog):
         await channel.connect()
 
     @commands.command()
+    """Command to play the music"""
     async def play(self, ctx, *, url):
         async with ctx.typing():
             player = await YTDLSource.from_url(url, loop=self.bot.loop, stream=True)
@@ -82,10 +86,13 @@ class Music(commands.Cog):
         await ctx.send(f'Now playing: {player.title}')
 
     @commands.command()
+    """Command to stop the music"""
     async def stop(self, ctx):
         await ctx.voice_client.disconnect()
 
     @play.before_invoke
+    """This funtion is to make sure the bot is connected to the voice channel, if it is not and you ask to stop
+        while is not connected to the voice channel, it will sent that message to the chat."""
     async def ensure_voice(self, ctx):
         if ctx.voice_client is None:
             if ctx.author.voice:
@@ -100,6 +107,7 @@ intents = discord.Intents.default()
 intents.message_content = True
 
 bot = commands.Bot(
+    """This is the first digit you have to use in order to start a command from the discord chat, you can change it"""
     command_prefix=commands.when_mentioned_or("!"),
     description='Relatively simple music bot example',
     intents=intents,
@@ -107,6 +115,7 @@ bot = commands.Bot(
 
 @bot.event
 async def on_ready():
+    """This is showed on the terminal to know the program is running"""
     print(f'Logged in as {bot.user} (ID: {bot.user.id})')
     print('------')
 
@@ -114,7 +123,7 @@ async def main():
     async with bot:
         await bot.add_cog(Music(bot))
         await bot.start('Your token')
-        ###Here you have to enter your token id from your discord bot created###
+        """Here you have to enter your token id from your discord bot created"""
 
 
 asyncio.run(main())
